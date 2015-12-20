@@ -16,8 +16,7 @@ class PrimesUIController extends Controller {
   }
 
   
-  get("/check") { request: Request =>
-    val num = nextInt
+  def check(num:Long) = {
     val state = engine.check(num)
     val resp = state match {
       case Some(r) if r.isPrime =>
@@ -27,22 +26,9 @@ class PrimesUIController extends Controller {
       case None =>
         s"<html><body>$num primes state is unknown</body></html>"
     }
-    resp
+    resp    
   }
   
-  
-  get("/check/:num") { request: CheckRequest =>
-    val num = request.num
-    val state = engine.check(num)
-    val resp = state match {
-      case Some(r) if r.isPrime =>
-        s"<html><body>$num is the ${r.nth} prime number</body></html>"
-      case Some(r) =>
-        s"<html><body>$num is the ${r.nth} not prime number</body></html>"
-      case None =>
-        s"<html><body>$num primes state is unknown</body></html>"
-    }
-    resp
-  }
-
+  get("/check") { request: Request => check(nextInt)}
+  get("/check/:num") { request: CheckRequest => check(request.num)}
 }
