@@ -1,4 +1,4 @@
-<configuration>
+<configuration scan="false" scanPeriod="5 minutes">
 
 	<appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
 
