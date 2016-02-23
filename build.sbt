@@ -19,7 +19,7 @@ libraryDependencies ++= Seq(
 )
 
 lazy val versions = new {
-  val finatra = "2.1.2"
+  val finatra = "2.1.3"
   val guice = "4.0"
 }
 
