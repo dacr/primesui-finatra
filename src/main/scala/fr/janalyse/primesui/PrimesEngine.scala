@@ -12,6 +12,8 @@ import net.sf.ehcache.Element
 import net.sf.ehcache.Cache
 import fr.janalyse.jmx._
 import org.slf4j.LoggerFactory
+import com.hazelcast.core.Hazelcast
+import com.hazelcast.core.IMap
 
 trait PrimesEngineMBean {
   def isUseCache(): Boolean
@@ -77,13 +79,23 @@ class PrimesEngine extends PrimesDBApi with PrimesEngineMBean with SysInfo {
     useCaches = v
   }
 
-  private lazy val cache = CacheManager.getInstance()
-  private lazy val cachedValuesCache = cache.getCache("CachedValuesCache")
-  private lazy val countersCache = cache.getCache("CountersCache")
-  private lazy val primesCache = cache.getCache("PrimesCache")
-  private lazy val lastCache = cache.getCache("LastCache")
-  private lazy val factorsCache = cache.getCache("FactorsCache")
-  private lazy val ulamCache = cache.getCache("UlamCache")
+//  private lazy val cache = CacheManager.getInstance()
+//  private lazy val cachedValuesCache = cache.getCache("CachedValuesCache")
+//  private lazy val countersCache = cache.getCache("CountersCache")
+//  private lazy val primesCache = cache.getCache("PrimesCache")
+//  private lazy val lastCache = cache.getCache("LastCache")
+//  private lazy val factorsCache = cache.getCache("FactorsCache")
+//  private lazy val ulamCache = cache.getCache("UlamCache")
+
+  private lazy val cache = Hazelcast.newHazelcastInstance()
+  private lazy val cachedValuesCache = cache.getMap[Long,Option[CheckedValue[Long]]]("CachedValuesCache")
+  private lazy val countersCache = cache.getMap[String,Long]("CountersCache")
+  private lazy val primesCache = cache.getMap[Long,Option[CheckedValue[Long]]]("PrimesCache")
+  private lazy val lastCache = cache.getMap[String,Option[CheckedValue[Long]]]("LastCache")
+  private lazy val factorsCache = cache.getMap[Long,Option[List[Long]]]("FactorsCache")
+  private lazy val ulamCache = cache.getMap[Int,Array[Byte]]("UlamCache")
+
+  
 
   private def populatePrimesIfRequired(upTo: Long = 100000, grouped: Int = 1000) = {
     logger.info("populate primes if required")
@@ -146,28 +158,40 @@ class PrimesEngine extends PrimesDBApi with PrimesEngineMBean with SysInfo {
     }
   }
 
+  def usinghazelcache[K,V](mkresult: => V, key: K, cache: IMap[K, V]): V = {
+    if (!useCaches) mkresult
+    else {
+      val item = cache.get(key)
+      if (item == null) {
+        val cv = mkresult
+        cache.put(key, cv)
+        cv
+      } else item.asInstanceOf[V]
+    }
+  }
+  
   def valuesCount(): Long = { //synchronized { // thundering effect counter measure
-    usingcache(transaction { dbValuesCount() }, "values", countersCache)
+    usinghazelcache(transaction { dbValuesCount() }, "values", countersCache)
   }
 
   def primesCount(): Long = { //synchronized { // thundering effect counter measure
-    usingcache(transaction { dbPrimesCount() }, "primes", countersCache)
+    usinghazelcache(transaction { dbPrimesCount() }, "primes", countersCache)
   }
 
   def notPrimesCount(): Long = { //synchronized { // thundering effect counter measure
-    usingcache(transaction { dbNotPrimesCount() }, "notprimes", countersCache)
+    usinghazelcache(transaction { dbNotPrimesCount() }, "notprimes", countersCache)
   }
 
   def lastPrime(): Option[CheckedValue[Long]] = { //synchronized { // thundering effect counter measure
-    usingcache(transaction { dbLastPrime.map(conv) }, "lastprime", lastCache)
+    usinghazelcache(transaction { dbLastPrime.map(conv) }, "lastprime", lastCache)
   }
 
   def lastNotPrime(): Option[CheckedValue[Long]] = { //synchronized { // thundering effect counter measure
-    usingcache(transaction { dbLastNotPrime.map(conv) }, "lastnotprime", lastCache)
+    usinghazelcache(transaction { dbLastNotPrime.map(conv) }, "lastnotprime", lastCache)
   }
 
   def check(num: Long): Option[CheckedValue[Long]] = {
-    usingcache(transaction { dbCheck(num).map(conv) }, num, cachedValuesCache)
+    usinghazelcache(transaction { dbCheck(num).map(conv) }, num, cachedValuesCache)
   }
 
   private def using[R, T <% { def close(): Unit }](make: => T)(proc: T => R): R = {
@@ -197,7 +221,7 @@ class PrimesEngine extends PrimesDBApi with PrimesEngineMBean with SysInfo {
   }
 
   def getPrime(nth: Long): Option[CheckedValue[Long]] = {
-    usingcache(transaction { dbGetPrime(nth).map(conv) }, nth, primesCache)
+    usinghazelcache(transaction { dbGetPrime(nth).map(conv) }, nth, primesCache)
   }
 
   def listPrimes(below: Long, above: Long) = {
@@ -221,7 +245,7 @@ class PrimesEngine extends PrimesDBApi with PrimesEngineMBean with SysInfo {
   }
 
   def ulamAsPNG(sz: Int): Array[Byte] = {
-    usingcache({
+    usinghazelcache({
       logger.info(s"Generating ULAM image of size ${sz}x${sz}")
       val started = System.currentTimeMillis()
       import javax.imageio.ImageIO
@@ -238,7 +262,7 @@ class PrimesEngine extends PrimesDBApi with PrimesEngineMBean with SysInfo {
   // TODO TO FINISH
   private val pgen = new PrimesGenerator[Long]
   def factorize(num: Long): Option[List[Long]] = {
-    usingcache(pgen.factorize(num, pgen.primes.iterator), num, factorsCache)
+    usinghazelcache(pgen.factorize(num, pgen.primes.iterator), num, factorsCache)
   }
 
 }
