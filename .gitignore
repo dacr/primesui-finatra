@@ -22,4 +22,4 @@ project/plugins/project/
 
 # IntelliJ specific
 .idea
-
+/logs
