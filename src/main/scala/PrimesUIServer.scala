@@ -15,9 +15,9 @@ class PrimesUIServer extends HttpServer {
 
   override def configureHttp(router: HttpRouter) {
     router
-      .filter[LoggingMDCFilter[Request, Response]]
-      .filter[TraceIdMDCFilter[Request, Response]]
-      .filter[AccessLoggingFilter[Request]]
+//      .filter[LoggingMDCFilter[Request, Response]]
+//      .filter[TraceIdMDCFilter[Request, Response]]
+//      .filter[AccessLoggingFilter[Request]]
       .filter[CommonFilters]
       .add[PrimesUIController]
   }
