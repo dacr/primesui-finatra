@@ -11,6 +11,15 @@ export PRIMESUI_CACHE=true
 sbt run
 ```
 
+## Packaging and quick in-place run
+
+```
+sbt assembly
+./runit.sh
+```
+
+`./runit.sh -help` to view options.
+
 ## tuning to achieve best results
 
 - Use java 8

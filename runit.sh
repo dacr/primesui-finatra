@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+
+JAVA_OPTS=""
+JAVA_OPTS=$JAVA_OPTS" -Xms2g"
+JAVA_OPTS=$JAVA_OPTS" -Xmx2g"
+JAVA_OPTS=$JAVA_OPTS" -Xmn1000m"
+JAVA_OPTS=$JAVA_OPTS" -XX:+UseConcMarkSweepGC"
+JAVA_OPTS=$JAVA_OPTS" -XX:+UseParNewGC"
+JAVA_OPTS=$JAVA_OPTS" -XX:+CMSParallelRemarkEnabled"
+JAVA_OPTS=$JAVA_OPTS" -XX:+ScavengeBeforeFullGC"
+JAVA_OPTS=$JAVA_OPTS" -XX:+CMSScavengeBeforeRemark"
+JAVA_OPTS=$JAVA_OPTS" -XX:+ExplicitGCInvokesConcurrent"
+JAVA_OPTS=$JAVA_OPTS" -XX:+CMSClassUnloadingEnabled"
+JAVA_OPTS=$JAVA_OPTS" -XX:+UseCMSInitiatingOccupancyOnly"
+JAVA_OPTS=$JAVA_OPTS" -XX:CMSInitiatingOccupancyFraction=80"
+JAVA_OPTS=$JAVA_OPTS" -XX:ParallelGCThreads=4"
+JAVA_OPTS=$JAVA_OPTS" -XX:+AggressiveOpts"
+JAVA_OPTS=$JAVA_OPTS" -XX:+OptimizeStringConcat"
+JAVA_OPTS=$JAVA_OPTS" -XX:+UseFastAccessorMethods"
+JAVA_OPTS=$JAVA_OPTS" -XX:+UseThreadPriorities"
+JAVA_OPTS=$JAVA_OPTS" -XX:ThreadPriorityPolicy=42"
+JAVA_OPTS=$JAVA_OPTS" -Dcom.sun.management.jmxremote.port=2555"
+JAVA_OPTS=$JAVA_OPTS" -Dcom.sun.management.jmxremote.authenticate=false"
+JAVA_OPTS=$JAVA_OPTS" -Dcom.sun.management.jmxremote.ssl=false"
+JAVA_OPTS=$JAVA_OPTS" -Djava.net.preferIPv4Stack=true"
+JAVA_OPTS=$JAVA_OPTS" -Djava.net.preferIPv6Addresses=false"
+JAVA_OPTS=$JAVA_OPTS" -Dhazelcast.jmx=true"
+
+java $JAVA_OPTS -jar target/scala-2.11/primesui-finagle-assembly-1.0.jar $*
+

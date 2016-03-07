@@ -25,6 +25,8 @@ javaOptions in run ++= Seq(
  "-XX:+AggressiveOpts",
  "-XX:+OptimizeStringConcat",
  "-XX:+UseFastAccessorMethods",
+ "-XX:+UseThreadPriorities",
+ "-XX:ThreadPriorityPolicy=42",
  "-Dcom.sun.management.jmxremote.port=2555",
  "-Dcom.sun.management.jmxremote.authenticate=false",
  "-Dcom.sun.management.jmxremote.ssl=false",
@@ -44,8 +46,11 @@ libraryDependencies ++= Seq(
   "javax.transaction"    % "jta"                                  % "1.1", // required for ehcache
   "com.hazelcast"         % "hazelcast"                           % "3.6.1", // objects cache alternative
   "mysql"                % "mysql-connector-java"                 % "5.1.36",
-  "ch.qos.logback"       % "logback-classic"                      % "1.1.3",
+  "ch.qos.logback"       % "logback-classic"                      % "1.1.6",
   "org.codehaus.janino"  % "janino"                               % "2.7.8" // Allow logback config file conditionals
+).map(
+   _.exclude("org.scala-lang", "scala-compiler")
+    .exclude("org.scala-lang", "scala-reflect")
 )
 
 lazy val versions = new {
@@ -57,7 +62,8 @@ libraryDependencies ++= Seq(
   "com.twitter.finatra" %% "finatra-http" % versions.finatra,
   "com.twitter.finatra" %% "finatra-httpclient" % versions.finatra,
   "com.twitter.finatra" %% "finatra-slf4j" % versions.finatra,
-  "com.twitter.inject" %% "inject-core" % versions.finatra,
+  "com.twitter.inject"  %% "inject-core" % versions.finatra,
+
 
   "com.twitter.finatra" %% "finatra-http" % versions.finatra % "test",
   "com.twitter.finatra" %% "finatra-jackson" % versions.finatra % "test",
@@ -89,5 +95,19 @@ resolvers ++= Seq(
 assemblyMergeStrategy in assembly := {
   case "BUILD" => MergeStrategy.discard
   case other => MergeStrategy.defaultMergeStrategy(other)
+}
+
+sourceGenerators in Compile <+= 
+ (sourceManaged in Compile, version, name) map {
+  (dir, version, projectname) =>
+  val file = dir / "fr" / "janalyse" / "primesui" / "MetaInfo.scala"
+  IO.write(file,
+  """package fr.janalyse.primesui
+    |object MetaInfo { 
+    |  val version="%s"
+    |  val project="%s"
+    |}
+    |""".stripMargin.format(version, projectname) )
+  Seq(file)
 }
 
