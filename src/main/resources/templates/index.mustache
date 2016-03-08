@@ -1,47 +1,40 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>PrimesUI</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="{{ctx.homeUrl}}css/bootstrap.min.css" rel="stylesheet" media="screen">
-    <link rel="icon" type="image/png" href="{{ctx.homeUrl}}images/logo.png">
-  </head>
-  <body>
-    <div class="container">
-      <div id="content">
-
-
-
-
+{{<layout.mustache}}
+  {{$title}}PrimesUI{{/title}}
+  {{$body}}
     <div class="jumbotron">
       <h1>
-        <img src="{{ctx.homeUrl}}images/logo.png"/>
+        <img src="{{ctx.base}}images/logo.png"/>
         <a href="https://github.com/dacr/primes-scalatra-app">PrimesUI</a>
       </h1>
-      
+
       <p style="color:red">
         <i>
           Classic webapp / mysql release of primes ui web application, classical design,
           almost all operations are synchronous.
         </i>
       </p>
-      
+
       <p>
         The database cache contains <b id="valuesCount">{{engine.valuesCount}}</b> already checked values, with
         <b id="primesCount">{{engine.primesCount}}</b> primes found.
-        The highest found prime is <b id="lastPrime">{{ engine.lastPrime.map(_.value).getOrElse(-1) }}</b>.
+        The highest found prime is
+          {{#highestPrime}}
+          <b id="lastPrime">{{highestPrime}}</b>.
+          {{/highestPrime}}
+          {{^highestPrime}}
+          <b id="lastPrime" style="color:red">unknown</b>.
+          {{/highestPrime}}
         The application cache is
           {{#engine.isUseCache}}
-            <span class="label label-success" id="cacheStatus">Enabled</span>          
+            <span class="label label-success" id="cacheStatus">Enabled</span>
           {{/engine.isUseCache}}
-          {{^engine.isUseCache}}          
+          {{^engine.isUseCache}}
             <span class="label label-warning" id="cacheStatus">Disabled</span>
           {{/engine.isUseCache}}
-        
+
       </p>
     </div>
-    
+
     <p align="right">
       <a href="https://github.com/dacr/primes-scalatra-app">PrimesUI</a>
       release <b><span id="primesui-version">{{version}}</span></b>
@@ -54,19 +47,19 @@
         <i>Current user homepage hit count <span id="userhitcount">{{count}}</span></i>
       {{/count}}
     </p>
-    
+
     <!-- ------------------------------------------------------------------------------------------- -->
     <ul class="nav nav-pills">
       <li class="active"><a data-toggle="tab" href="#features">Features</a></li>
       <li ><a data-toggle="tab" href="#experiments">Experiments</a></li>
       <li ><a data-toggle="tab" href="#admin">Admin</a></li>
     </ul>
-    
+
     <div class="tab-content">
-    
+
       <!-- ------------------------------------------------------------------------------------------- -->
       <div id="features" class="tab-pane fade in active">
-        
+
         <ul class="list-group">
           <li class="list-group-item">
             <b><a href="@checkUrl">check/</a></b><code>$num</code>
@@ -101,7 +94,7 @@
             Take care of your CPUs and Heap, this is a server side computation.
             @for(n <-List(128,256,512,1024)) { <a href="@{ulamUrl+"/"+n}">@n</a> }
           </li>
-         
+
         </ul>
       </div>
       <!-- ------------------------------------------------------------------------------------------- -->
@@ -172,11 +165,11 @@
         of <code>$howmany</code> kilobytes, default is 3Mb.
       </li>
     </ul>
-        
+
       </div>
       <!-- ------------------------------------------------------------------------------------------- -->
       <div id="admin" class="tab-pane fade">
-      
+
         <ul class="list-group">
           <li class="list-group-item">
             <b><a href="@aliveUrl">alive</a></b>
@@ -191,19 +184,8 @@
             : Application configuration
           </li>
         </ul>
-        
-      </div>
-      <!-- ------------------------------------------------------------------------------------------- -->    
-    
-    </div>
 
-    
-    
-    
       </div>
-    </div>
-    
-    <script src="@{ctx.homeUrl}js/jquery.min.js"></script>
-    <script src="@{ctx.homeUrl}js/bootstrap.min.js"></script>
-  </body>
-</html>
+      <!-- ------------------------------------------------------------------------------------------- -->
+  {{/body}}
+{{/layout.mustache}}

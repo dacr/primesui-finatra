@@ -1,0 +1,24 @@
+{{<layout.mustache}}
+  {{$title}}PrimesUI check result{{/title}}
+  {{$body}}
+    <h1>
+      {{#value}}
+         {{#value.isPrime}}
+           {{num}} is the {{nth}}th prime
+         {{/value.isPrime}}
+         {{^value.isPrime}}
+           {{num}} is the {{nth}}th not prime
+         {{/value.isPrime}}
+      {{/value}}
+      {{^value}}
+        {{num}} prime status is unknown, not yet computed
+      {{/value}}
+    </h1>
+
+    {{#againUrl}}
+      <a href="{{ctx.base}}{{againUrl}}">again</a> -
+    {{/againUrl}}
+    <a href="{{ctx.base}}">back</a>
+
+  {{/body}}
+{{/layout.mustache}}
