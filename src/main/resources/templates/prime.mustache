@@ -1,0 +1,21 @@
+{{<layout.mustache}}
+  {{$title}}PrimesUI check result{{/title}}
+  {{$body}}
+    <h1>
+      {{#result}}
+         {{#result.isPrime}}
+           The {{nth}}th prime is {{result.value}}
+         {{/result.isPrime}}
+         {{^result.isPrime}}
+         The {{nth}}th not prime is {{result.value}}
+         {{/result.isPrime}}
+      {{/result}}
+      {{^result}}
+        not yet computed for {{nth}}th
+      {{/result}}
+    </h1>
+
+    {{<back.mustache}}{{/back.mustache}}
+
+  {{/body}}
+{{/layout.mustache}}

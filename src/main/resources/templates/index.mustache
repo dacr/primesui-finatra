@@ -15,8 +15,8 @@
       </p>
 
       <p>
-        The database cache contains <b id="valuesCount">{{engine.valuesCount}}</b> already checked values, with
-        <b id="primesCount">{{engine.primesCount}}</b> primes found.
+        The database cache contains <b id="valuesCount">{{valuesCount}}</b> already checked values, with
+        <b id="primesCount">{{primesCount}}</b> primes found.
         The highest found prime is
           {{#highestPrime}}
           <b id="lastPrime">{{highestPrime}}</b>.
@@ -25,12 +25,12 @@
           <b id="lastPrime" style="color:red">unknown</b>.
           {{/highestPrime}}
         The application cache is
-          {{#engine.isUseCache}}
+          {{#useCache}}
             <span class="label label-success" id="cacheStatus">Enabled</span>
-          {{/engine.isUseCache}}
-          {{^engine.isUseCache}}
+          {{/useCache}}
+          {{^useCache}}
             <span class="label label-warning" id="cacheStatus">Disabled</span>
-          {{/engine.isUseCache}}
+          {{/useCache}}
 
       </p>
     </div>
@@ -43,9 +43,9 @@
       <a href="https://github.com/dacr/primes">Primes library</a>
       release <b><span id="primes-version">{{pversion}}</span></b>
       <br/>
-      {{#count}}
-        <i>Current user homepage hit count <span id="userhitcount">{{count}}</span></i>
-      {{/count}}
+      {{#hitCount}}
+        <i>Current user homepage hit count <span id="userhitcount">{{hitCount}}</span></i>
+      {{/hitCount}}
     </p>
 
     <!-- ------------------------------------------------------------------------------------------- -->
@@ -62,11 +62,11 @@
 
         <ul class="list-group">
           <li class="list-group-item">
-            <b><a href="@checkUrl">check/</a></b><code>$num</code>
+            <b><a href="{{ctx.base}}{{ctx.check}}">{{ctx.check}}/</a></b><code>$num</code>
             : Test if <code>$num</code> is a prime number or not
           </li>
           <li class="list-group-item">
-            <b><a href="@primeUrl">prime/</a></b><code>$nth</code>
+            <b><a href="{{ctx.base}}{{ctx.prime}}">{{ctx.prime}}/</a></b><code>$nth</code>
             : Get the <code>$nth</code> prime
           </li>
           <li class="list-group-item">

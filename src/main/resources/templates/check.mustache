@@ -15,10 +15,7 @@
       {{/value}}
     </h1>
 
-    {{#againUrl}}
-      <a href="{{ctx.base}}{{againUrl}}">again</a> -
-    {{/againUrl}}
-    <a href="{{ctx.base}}">back</a>
+    {{<back.mustache}}{{/back.mustache}}
 
   {{/body}}
 {{/layout.mustache}}
