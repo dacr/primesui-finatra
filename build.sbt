@@ -1,17 +1,19 @@
 name := "primesui-finagle"
 version := "1.0"
 organization := "fr.janalyse"
-scalaVersion := "2.11.7"
+scalaVersion := "2.11.8"
 
 scalacOptions := Seq("-unchecked", "-deprecation", "-encoding", "utf8")
 
 fork := true
-javaOptions in run ++= Seq(
+
+javaOptions in run := Seq(
  "-Xms2g",
  "-Xmx2g",
  "-Xmn1000m",
 // "-XX:GCTimeRatio=50",
 // "-XX:SurvivorRatio=4",
+ "-XX:+PerfDisableSharedMem", // Decrease the latency !!! 
  "-XX:+UseConcMarkSweepGC",
  "-XX:+UseParNewGC",
  "-XX:+CMSParallelRemarkEnabled",
@@ -21,12 +23,41 @@ javaOptions in run ++= Seq(
  "-XX:+CMSClassUnloadingEnabled",
  "-XX:+UseCMSInitiatingOccupancyOnly",
  "-XX:CMSInitiatingOccupancyFraction=80",
- "-XX:ParallelGCThreads=4",
+ "-XX:ParallelGCThreads=3", // Number of CPU / 2 if load test injection is done from the same host
  "-XX:+AggressiveOpts",
  "-XX:+OptimizeStringConcat",
  "-XX:+UseFastAccessorMethods",
  "-XX:+UseThreadPriorities",
  "-XX:ThreadPriorityPolicy=42",
+ "-verbose:gc",
+ "-XX:+PrintGCDetails",
+ "-XX:+PrintGCDateStamps",
+ "-Xloggc:GC_finatra.log",
+ "-Dcom.sun.management.jmxremote.port=2555",
+ "-Dcom.sun.management.jmxremote.authenticate=false",
+ "-Dcom.sun.management.jmxremote.ssl=false",
+ "-Djava.net.preferIPv4Stack=true",
+ "-Djava.net.preferIPv6Addresses=false",
+ "-Djava.security.egd=file:///dev/urandom",
+ "-Dhazelcast.jmx=true"
+)
+
+/*
+javaOptions in run := Seq(
+ "-Xms2g",
+ "-Xmx2g",
+ "-XX:+UseG1GC",
+ "-XX:MaxGCPauseMillis=50",
+ "-XX:G1HeapRegionSize=200m",
+ "-XX:InitiatingHeapOccupancyPercent=75",
+ "-XX:+ParallelRefProcEnabled",
+ "-XX:+PerfDisableSharedMem",
+ "-XX:+AggressiveOpts",
+ "-XX:+OptimizeStringConcat",
+ "-verbose:gc",
+// "-XX:+PrintGCDetails",
+ "-XX:+PrintGCDateStamps",
+ "-Xloggc:GC_finatra.log",
  "-Dcom.sun.management.jmxremote.port=2555",
  "-Dcom.sun.management.jmxremote.authenticate=false",
  "-Dcom.sun.management.jmxremote.ssl=false",
@@ -34,7 +65,7 @@ javaOptions in run ++= Seq(
  "-Djava.net.preferIPv6Addresses=false",
  "-Dhazelcast.jmx=true"
 )
-
+*/
 
 libraryDependencies ++= Seq(
   "fr.janalyse"         %% "primes"                               % "1.2.2-SNAPSHOT",

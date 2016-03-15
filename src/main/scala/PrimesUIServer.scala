@@ -1,8 +1,8 @@
 import com.twitter.finagle.http.{Request, Response}
 import com.twitter.finatra.http.HttpServer
-import com.twitter.finatra.http.filters.{CommonFilters,AccessLoggingFilter}
 import com.twitter.finatra.http.routing.HttpRouter
-import com.twitter.finatra.http.filters.{CommonFilters, LoggingMDCFilter, TraceIdMDCFilter}
+//import com.twitter.finatra.http.filters.{CommonFilters, LoggingMDCFilter, TraceIdMDCFilter}#
+import com.twitter.finatra.http.filters._
 import com.twitter.finatra.logging.modules.Slf4jBridgeModule
 
 
@@ -17,8 +17,9 @@ class PrimesUIServer extends HttpServer {
     router
 //      .filter[LoggingMDCFilter[Request, Response]]
 //      .filter[TraceIdMDCFilter[Request, Response]]
-//      .filter[AccessLoggingFilter[Request]]
-      .filter[CommonFilters]
+//      .filter[CommonFilters]
+      .filter[HttpResponseFilter[Request]]
+      .filter[ExceptionMappingFilter[Request]]
       .add[PrimesUIController]
   }
 }
