@@ -36,7 +36,10 @@ FINATRA_OPTS=""
 FINATRA_OPTS=$FINATRA_OPTS" -tracingEnabled=false"
 FINATRA_OPTS=$FINATRA_OPTS" -com.twitter.finagle.netty3.numWorkers=4"
 FINATRA_OPTS=$FINATRA_OPTS" -com.twitter.jvm.numProcs=4"
-FINATRA_OPTS=$FINATRA_OPTS" -com.twitter.finagle.exp.scheduler=forkjoin:4"
+FINATRA_OPTS=$FINATRA_OPTS" -com.twitter.finagle.exp.scheduler=forkjoin:6"
+#FINATRA_OPTS=$FINATRA_OPTS" -com.twitter.finagle.exp.scheduler=bridged:4"
+#FINATRA_OPTS=$FINATRA_OPTS" -com.twitter.finagle.exp.scheduler=local"
+#FINATRA_OPTS=$FINATRA_OPTS" -com.twitter.finagle.exp.scheduler=lifo"
 FINATRA_OPTS=$FINATRA_OPTS" "
 
 java $JAVA_OPTS -jar target/scala-2.11/primesui-finagle-assembly-1.0.jar $FINATRA_OPTS $*
