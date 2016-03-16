@@ -11,8 +11,8 @@ javaOptions in run := Seq(
  "-Xms2g",
  "-Xmx2g",
  "-Xmn1000m",
-// "-XX:GCTimeRatio=50",
-// "-XX:SurvivorRatio=4",
+ //"-XX:GCTimeRatio=50",
+ //"-XX:SurvivorRatio=4",
  "-XX:+PerfDisableSharedMem", // Decrease the latency !!! 
  "-XX:+UseConcMarkSweepGC",
  "-XX:+UseParNewGC",
@@ -85,7 +85,7 @@ libraryDependencies ++= Seq(
 )
 
 lazy val versions = new {
-  val finatra = "2.1.4"
+  val finatra = "2.1.5"
   val guice = "4.0"
 }
 
