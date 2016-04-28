@@ -1,4 +1,4 @@
-name := "primesui-finagle"
+name := "primesui-finatra"
 version := "1.0"
 organization := "fr.janalyse"
 scalaVersion := "2.11.8"
@@ -77,7 +77,7 @@ libraryDependencies ++= Seq(
   "javax.transaction"    % "jta"                                  % "1.1", // required for ehcache
   "com.hazelcast"         % "hazelcast"                           % "3.6.1", // objects cache alternative
   "mysql"                % "mysql-connector-java"                 % "5.1.36",
-  "ch.qos.logback"       % "logback-classic"                      % "1.1.6",
+  "ch.qos.logback"       % "logback-classic"                      % "1.1.7",
   "org.codehaus.janino"  % "janino"                               % "2.7.8" // Allow logback config file conditionals
 ).map(
    _.exclude("org.scala-lang", "scala-compiler")
@@ -85,7 +85,7 @@ libraryDependencies ++= Seq(
 )
 
 lazy val versions = new {
-  val finatra = "2.1.5"
+  val finatra = "2.1.6"
   val guice = "4.0"
 }
 
