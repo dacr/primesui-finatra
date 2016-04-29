@@ -7,6 +7,9 @@ import fr.janalyse.primes._
 import fr.janalyse.primesui._
 import com.twitter.finatra.http.request.RequestUtils
 
+
+
+
 @Mustache("index")
 case class IndexView(
   ctx: PrimesUIContext,
@@ -51,7 +54,7 @@ case class PrimesUIContext(
 
 class PrimesUIController extends Controller {
 
-  lazy val engine = fr.janalyse.primesui.PrimesEngine.engine
+  val engine = fr.janalyse.primesui.PrimesEngine.engine
   val rnd = scala.util.Random
   def nextInt = rnd.nextInt(10000)
 
@@ -105,16 +108,35 @@ class PrimesUIController extends Controller {
     val duration=(System.currentTimeMillis()-started)
     (state, duration)
   }
+
+  import com.twitter.finatra.utils.FuturePools
+  private val futurePool = FuturePools.unboundedPool("CallbackConverter")
+
   
   def goodlogscheck(num: Long, again: Option[String]) = {
     info("Checking#"+num)
-    val (state, duration) = durationOf {
-      engine.check(num)
+    val tf1 = futurePool {
+      info("Entering future")
+      val (state, duration) = durationOf {
+        Thread.sleep(500)
+        engine.check(num)
+      }
+      def message="Checked "+state.toString()+" in "+duration+" milliseconds"
+      debug(message)
+      info(message)
+      state
     }
-    def message="Checked "+state.toString()+" in "+duration+" milliseconds"
-    debug(message)
-    info(message)
-    CheckView(ctx, num, state, again)
+    val tf2 = futurePool {
+      info("Entering future")
+      Thread.sleep(500)
+      "ok"
+    }
+    for {
+      state <- tf1
+      _ <- tf2
+    } yield {
+      Thread.sleep(500) ; CheckView(ctx, num, state, again)
+    }
   }
 
   get(base + ctx.goodlogscheck) { request: Request => goodlogscheck(nextInt, Some(ctx.goodlogscheck))}

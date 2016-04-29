@@ -50,7 +50,7 @@
       <maxFileSize>50MB</maxFileSize>
     </triggeringPolicy>
     <encoder>
-      <pattern>%date %.-3level %-16X{traceId} %-25logger{0} %msg%n</pattern>
+      <pattern>%date %level [%thread] [%X{traceId}] %logger{0} %msg%n</pattern>
     </encoder>
   </appender>
 
